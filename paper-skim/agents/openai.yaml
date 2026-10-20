@@ -1,0 +1,4 @@
+interface:
+  display_name: "论文略读"
+  short_description: "先通俗读懂引言和方法，再逐章补读与按需解释术语，最后可选整理成 Zotero 笔记"
+  default_prompt: "用 $paper-skim 带我读这篇论文，先重点讲 Introduction 和 Methods，再逐章补读，术语按需解释，最后给我整理 Zotero 笔记的选项。"
