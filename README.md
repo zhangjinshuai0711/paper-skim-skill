@@ -1,71 +1,45 @@
-# Paper Skim · 论文略读
+# paper-skim · 论文略读
 
-用通俗中文读懂论文：先重点理解 **Introduction 与 Methods**，再按需逐章补读；遇到术语、公式和指标时单独展开，最后可选整理成适合放入 Zotero 的阅读笔记。
+一个用于 Codex / Claude Code 等代理的自创 skill：用通俗中文快速讲懂科研论文。
 
-核心是讲清楚 **为什么研究、创新在哪里、具体怎样工作、证据支持到哪里**。解释不只停留在“效果提高了”，也不把生活比方当成论文事实。
+## 它做什么
 
-## 安装到 Codex
+- **快速略读**：先讲 Introduction 的问题与动机，再重点拆 Methods 的机制；实验与讨论只提支撑核心创新的证据和边界。
+- **逐章补读**：说"下一章"即从上次位置继续，术语按需展开（"DPO 是什么""NDCG 怎么算"）。
+- **小步问答推进**：讲一段、问一个简短问题确认理解，不生成试卷、不搞考试。
+- **可选整理 Zotero 笔记**：读完后可把讨论整理成一份可复用的中文 Markdown 阅读笔记（模板见 [skill/references/note-template.md](skill/references/note-template.md)）。
 
-将仓库克隆到准备长期保留的位置：
+不用于：完整双语翻译、正式审稿、交互课程制作。
 
-```sh
-git clone https://github.com/zhangjinshuai0711/paper-skim-skill.git
-cd paper-skim-skill
-skill_install_dir="${CODEX_HOME:-$HOME/.codex}/skills"
-mkdir -p "$skill_install_dir"
-ln -s "$PWD/paper-skim" "$skill_install_dir/paper-skim"
+## 安装
+
+### Codex
+
+```bash
+git clone https://github.com/zhangjinshuai0711/paper-skim.git
+mkdir -p ~/.codex/skills
+cp -r paper-skim/skill ~/.codex/skills/paper-skim
 ```
 
-以上命令适用于 macOS/Linux。若同名目录或链接已经存在，先检查其内容，不覆盖。链接安装需要保留仓库位置；也可以把 `paper-skim/` 整个复制到自己的 skills 目录。
+### Claude Code 兼容
 
-安装后，在支持 skills 的 Codex 会话中显式调用 `$paper-skim`。客户端的自动发现与刷新时机可能不同。此 skill 是一套阅读指令，不需要额外模型 API、运行服务或安装 Python 包。
+skill 采用标准 `SKILL.md` frontmatter（name + description）结构，同样放入 `~/.claude/skills/paper-skim/` 即可使用。
 
-## 一次完整的阅读流程
+## 使用
 
-1. **先读重点**：从摘要和实际目录定位问题，重点讲 Introduction 的问题提出过程、Methods 的解决机制。
-2. **再补读其他章节**：说“继续下一章”，逐章了解实验、讨论等部分在讲什么；已重点读过的内容不自动重讲。
-3. **随时查术语**：如“DPO 是什么”“NDCG 怎么算”，单独讲解后返回阅读主线。侧栏取决于所在界面，不自动开发或操控 UI。
-4. **最后选做笔记**：结束时提供“按这次讲解整理一份 Zotero 阅读笔记”的选项，选择后才生成。已明确要求笔记时直接整理。
+对代理说：
 
-用户也可以只快速读两部分、提前整理笔记或中途停止，不必走完固定流程。
+> 用 paper-skim 带我读这篇论文，先重点讲 Introduction 和 Methods，再逐章补读，术语按需解释，最后给我整理 Zotero 笔记的选项。
 
-## 使用示例
+## 文件结构
 
-```text
-用 $paper-skim 帮我读这篇论文。
-先重点讲 Introduction 和 Methods，用熟悉的生活例子说明，
-重点讲创新是怎样工作的，其他章节之后再逐章读。
+```
+skill/
+├── SKILL.md                    # 核心阅读与讲解规则
+├── agents/openai.yaml          # OpenAI/Codex 界面元数据
+└── references/note-template.md # Zotero 笔记整理模板
 ```
 
-```text
-继续下一章，讲清楚这一章在检验什么，以及结论能支持到哪里。
-```
+## License
 
-```text
-NDCG 怎么计算？用一个很小的例子演示，再说明它在这篇论文中的作用。
-```
-
-```text
-把这次阅读整理成适合放入 Zotero 的中文笔记，
-重点记录问题怎样提出、方法怎样解决、创新和必要的证据边界。
-```
-
-可提供论文文件、链接或已有可用全文；资料不足时应明确实际阅读范围，不补造章节或实验。
-
-## 文件与边界
-
-- [Skill 入口](paper-skim/SKILL.md)：阅读路线、通俗机制讲解、术语分支与笔记选项。
-- [笔记整理参考](paper-skim/references/note-template.md)：可复用结构及证据检查。
-- [Codex 展示信息](paper-skim/agents/openai.yaml)：名称与默认调用提示。
-
-普通阅读默认在聊天中完成，不自动创建讲义、网站或笔记。笔记默认保存为中文 Markdown；保存文件不等于写入 Zotero，只有用户明确要求直接入库时才使用可用连接工具。
-
-本 skill 不替代完整双语翻译、正式审稿、实验复现或交互课程制作。论文事实、教学比方和阅读者推论需要分开；生成的解释与笔记仍需核对原文。
-
-公开内容仅包含可复用的 skill 与说明，不包含论文全文、私人阅读笔记、聊天记录或个人知识库。
-
-## 验证范围
-
-已检查 skill 格式、展示配置及相对引用路径；发布时核对公开文件与本地源文件的一致性。结构检查不等于完整阅读效果验证，不代表论文实验已经复现。
-
-本仓库暂未指定开源许可证。
+MIT
